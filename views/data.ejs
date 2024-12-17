@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Logger</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <header class="header">
+        <h2>IoT Logger</h2>
+        <h3>Selamat datang, <%= userName %></h3>
+        <button type="submit" id="logoutButton" class="logout-btn">Logout</button>
+    </header>
+
+    <div class="container">
+        <!-- Data Terkini -->
+        <h3>Data Sensor Terkini</h3>
+        <div class="sensor-cards">
+            <div class="card" id="humidityCard"><h4>Kelembapan</h4><p id="humidityValue">Loading...</p></div>
+            <div class="card" id="nitrogenCard"><h4>Nitrogen</h4><p id="nitrogenValue">Loading...</p></div>
+            <div class="card" id="phosporCard"><h4>Phospor</h4><p id="phosporValue">Loading...</p></div>
+            <div class="card" id="kaliumCard"><h4>Kalium</h4><p id="kaliumValue">Loading...</p></div>
+            <div class="card" id="temperatureCard"><h4>Suhu</h4><p id="temperatureValue">Loading...</p></div>
+            <div class="card" id="phCard"><h4>pH</h4><p id="phValue">Loading...</p></div>
+            <div class="card" id="conductivityCard"><h4>Konduktivitas</h4><p id="conductivityValue">Loading...</p></div>
+        </div>
+
+
+        <!-- Dropdown untuk memilih grafik -->
+        <h3>Grafik</h3>
+        <select id="graphSelect">
+            <option value="humidity">Kelembapan</option>
+            <option value="nitrogen">Nitrogen</option>
+            <option value="phospor">Phospor</option>
+            <option value="kalium">Kalium</option>
+            <option value="temperature">Suhu</option>
+            <option value="ph">pH</option>
+            <option value="conductivity">Konduktivitas</option>
+        </select>
+
+
+        <canvas id="sensorChart"></canvas>
+    </div>
+
+
+    <div id="latestData" style="display:none;"><%- JSON.stringify(latestData) %></div>
+    <div id="sensorData" style="display:none;"><%- JSON.stringify(sensorData) %></div>
+
+
+
+    <script src="/js/data.js"></script>
+
+
+    <% if (typeof message !== 'undefined' && message) { %>
+        <script>
+            Swal.fire({
+                title: 'Error',
+                text: "<%= message %>",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    <% } %>
+
+    <script>
+        // Menangani tombol logout dengan SweetAlert
+        document.getElementById("logoutButton").addEventListener("click", function() {
+            Swal.fire({
+                title: 'Logout',
+                text: "Apakah Anda yakin ingin keluar?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Logout',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Kirim permintaan POST ke server untuk logout
+                    fetch('/', { method: 'POST' })
+                        .then(() => {
+                            Swal.fire({
+                                title: 'Logout Berhasil',
+                                text: 'Anda akan dialihkan ke halaman utama.',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            setTimeout(() => {
+                                window.location.href = "/"; // Arahkan ke halaman utama
+                            }, 2000);
+                        })
+                        .catch((error) => {
+                            console.error('Logout error:', error);
+                            Swal.fire('Error', 'Gagal logout. Coba lagi.', 'error');
+                        });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

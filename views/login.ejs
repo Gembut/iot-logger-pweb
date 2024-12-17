@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - IoT Logger</title>
+    <link rel="stylesheet" href="css/style-login.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Login Container -->
+    <div class="auth-container">
+        <h2>Masuk</h2>
+        <form action="/login" method="post" id="loginForm">
+            <label for="loginEmail">Email</label>
+            <input type="email" name="email" id="loginEmail" placeholder="Masukan email" required>
+
+            <label for="loginPassword">Password</label>
+            <input type="password" name="password" loginPassword" placeholder="Masukan password" required>
+
+            <button type="submit" class="submit-btn">Masuk</button>
+        </form>
+        <p>Belum punya akun? <a href="signup">Daftar disini</a></p>
+    </div>
+
+
+    <% if (typeof message !== 'undefined' && message) { %>
+        <script>
+            Swal.fire({
+                title: 'Login Gagal',
+                text: "<%= message %>",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    <% } %>
+
+</body>
+
+</html>
