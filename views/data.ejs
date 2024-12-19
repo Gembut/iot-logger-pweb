@@ -115,40 +115,7 @@
         });
     </script>
 
-<script>
-    const user_email = "rafi@mail.com"; // Ganti sesuai user aktif
 
-    // Ambil daftar device berdasarkan user_email
-    fetch(`/userDevices?user_email=${user_email}`)
-        .then(response => response.json())
-        .then(devices => {
-            const deviceSelect = document.getElementById("deviceSelect");
-
-            // Isi dropdown dengan daftar device
-            devices.forEach(device => {
-                const option = document.createElement("option");
-                option.value = device;
-                option.textContent = device;
-                deviceSelect.appendChild(option);
-            });
-        });
-
-    // Event listener untuk menampilkan data device terpilih
-    document.getElementById("deviceSelect").addEventListener("change", function() {
-        const selectedDevice = this.value;
-
-        if (selectedDevice) {
-            fetch(`/getSensorData?device_id=${selectedDevice}`)
-                .then(response => response.json())
-                .then(data => {
-                    const deviceDataDiv = document.getElementById("deviceData");
-                    deviceDataDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                });
-        } else {
-            document.getElementById("deviceData").innerHTML = "";
-        }
-    });
-</script>
 
 
 </body>
