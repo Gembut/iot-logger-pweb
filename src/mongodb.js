@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 // Koneksi ke MongoDB Atlas
 const uri = "mongodb+srv://admin:6969@iot-logger.24cd3.mongodb.net/iot-logger?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://Naufy:6969@activitytracker.jys5x.mongodb.net/activitytracker"
 mongoose.connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -39,7 +40,8 @@ const sensorSchema = new mongoose.Schema({
     ph: Number,
     conductivity: Number,
     date: String,
-    user_email: String // Menyimpan email user
+    user_email: String,
+    device_id: String
 });
 
 // Membuat model dari skema

@@ -104,39 +104,47 @@ app.post("/post", async (req, res) => {
 });
 
 
+function isAuthenticated(req, res, next) {
+    if (req.session && req.session.user_email) {
+        return next();
+    }
+    res.redirect('/login'); // Arahkan ke halaman login jika belum login
+}
+
+app.use((req, res, next) => {
+    res.locals.user_email = req.session.user_email || null; // Tambahkan user_email ke res.locals
+    next();
+});
 
 
-app.get("/data", async (req, res) => {
+app.get("/data", isAuthenticated, async (req, res) => {
     try {
-        const userEmail = req.session.user_email; // Ambil email dari sesi
+        const userEmail = req.session.user_email;
 
         if (!userEmail) {
-            return res.status(401).render("data", {message:"Anda harus login terlebih dahulu."});
+            return res.status(401).render("data", { message: "Anda harus login terlebih dahulu." });
         }
 
-        console.log("Fetching data for email:", userEmail); // Debug log email
-
-        // Ambil data sensor berdasarkan email user
-        const sensorData = await SensorData.find({user_email: userEmail}).sort({ date: 1 });
-        console.log("Fetched sensor data:", sensorData);
-
+        // Ambil semua perangkat yang dimiliki user
+        const devices = await SensorData.distinct("device_id", { user_email: userEmail });
+        
+        const sensorData = await SensorData.find({ user_email: userEmail }).sort({ date: -1 });
         const latestData = sensorData.length > 0 ? sensorData[sensorData.length - 1] : {};
 
-        console.log("Latest data:", latestData);
-        console.log("Sensor data:", sensorData);
+        const user = await collection.findOne({ email: userEmail }, { name: 1, _id: 0 });
 
-        const user = await collection.findOne({email: userEmail}, {name:1, _id:0});
-        // res.render("data", { latestData: latestData, sensorData: sensorData });
         res.render("data", { 
             latestData: latestData, 
             sensorData: sensorData,
-            userName: user.name // Kirim nama user
+            devices: devices, // Kirim daftar perangkat
+            userName: user.name 
         });
     } catch (error) {
         console.error("Error fetching user data:", error);
         res.status(500).send("Error fetching user data.");
     }
 });
+
 
 
 app.get("/data/json", async (req, res) => {
@@ -149,6 +157,64 @@ app.get("/data/json", async (req, res) => {
     } catch (error) {
         console.error("Error fetching sensor data:", error);
         res.status(500).json({ error: "Error fetching sensor data" });
+    }
+});
+
+app.get('/userDevices', async (req, res) => {
+    const user_email = req.session.user_email;
+
+    try {
+        // Gunakan `distinct` untuk memastikan perangkat unik
+        const devices = await SensorData.distinct("device_id", { user_email });
+        res.json(devices);
+    } catch (err) {
+        console.error("Error fetching devices:", err);
+        res.status(500).json({ error: "Error fetching devices" });
+    }
+});
+
+
+
+
+app.get("/getDeviceData", isAuthenticated, async (req, res) => {
+    const { device_id } = req.query; // Ambil device_id dari query parameter
+    const userEmail = req.session.user_email;
+
+    try {
+        // Ambil data berdasarkan device_id dan user_email
+        const deviceData = await SensorData.find({ device_id, user_email: userEmail }).sort({ date: -1 });
+
+        if (!deviceData.length) {
+            return res.status(404).json({ message: "Data tidak ditemukan untuk perangkat ini." });
+        }
+
+        const latestData = deviceData[0]; // Data terkini (data pertama setelah disortir descending)
+        res.json({ latestData, sensorData: deviceData });
+    } catch (error) {
+        console.error("Error fetching device data:", error);
+        res.status(500).json({ error: "Error fetching device data." });
+    }
+});
+
+
+ 
+
+app.post("/selectDevice", isAuthenticated, async (req, res) => {
+    const { device } = req.body;
+    const userEmail = req.session.user_email;
+
+    try {
+        // Validasi apakah perangkat milik user
+        const isUserDevice = await SensorData.findOne({ device_id: device, user_email: userEmail });
+
+        if (!isUserDevice) {
+            return res.status(403).send("Anda tidak memiliki perangkat ini.");
+        }
+
+        res.send(`Perangkat ${device} telah dipilih!`);
+    } catch (error) {
+        console.error("Error selecting device:", error);
+        res.status(500).send("Error selecting device.");
     }
 });
 
@@ -181,13 +247,10 @@ app.post("/signup", async (req, res)=>{
 
         const userdata = await collection.insertMany(data)
         res.redirect("/login"); // Arahkan ke halaman login
-        console.log("user maberhasil masuk db")
+        console.log("user berhasil masuk db")
     }
 })
 
-// app.get("/login", (req, res) => {
-//     res.render("login", { message: null });
-// });
 
 app.post("/login", async (req, res) => {
     try {
@@ -217,5 +280,6 @@ app.post("/login", async (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`)
+    // console.log(`Server running on http://localhost:${port}`)
+    console.log(`Server is running`)
 })

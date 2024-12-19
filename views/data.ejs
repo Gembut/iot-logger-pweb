@@ -15,19 +15,31 @@
         <h3>Selamat datang, <%= userName %></h3>
         <button type="submit" id="logoutButton" class="logout-btn">Logout</button>
     </header>
+    
 
     <div class="container">
         <!-- Data Terkini -->
         <h3>Data Sensor Terkini</h3>
+        <form id="deviceForm">
+            <label for="device"></label>
+            <select name="device" id="deviceSelect">
+                <% devices.forEach(device => { %>
+                    <option value="<%= device %>"><%= device %></option>
+                <% }); %>
+            </select>
+        </form>
+        
         <div class="sensor-cards">
-            <div class="card" id="humidityCard"><h4>Kelembapan</h4><p id="humidityValue">Loading...</p></div>
-            <div class="card" id="nitrogenCard"><h4>Nitrogen</h4><p id="nitrogenValue">Loading...</p></div>
-            <div class="card" id="phosporCard"><h4>Phospor</h4><p id="phosporValue">Loading...</p></div>
-            <div class="card" id="kaliumCard"><h4>Kalium</h4><p id="kaliumValue">Loading...</p></div>
-            <div class="card" id="temperatureCard"><h4>Suhu</h4><p id="temperatureValue">Loading...</p></div>
-            <div class="card" id="phCard"><h4>pH</h4><p id="phValue">Loading...</p></div>
-            <div class="card" id="conductivityCard"><h4>Konduktivitas</h4><p id="conductivityValue">Loading...</p></div>
+            <div class="card" id="humidityCard"><h4>Kelembapan</h4><p id="humidityValue">N/A</p></div>
+            <div class="card" id="nitrogenCard"><h4>Nitrogen</h4><p id="nitrogenValue">N/A</p></div>
+            <div class="card" id="phosporCard"><h4>Phospor</h4><p id="phosporValue">N/A</p></div>
+            <div class="card" id="kaliumCard"><h4>Kalium</h4><p id="kaliumValue">N/A</p></div>
+            <div class="card" id="temperatureCard"><h4>Suhu</h4><p id="temperatureValue">N/A</p></div>
+            <div class="card" id="phCard"><h4>pH</h4><p id="phValue">N/A</p></div>
+            <div class="card" id="conductivityCard"><h4>Konduktivitas</h4><p id="conductivityValue">N/A</p></div>
         </div>
+        
+        
 
 
         <!-- Dropdown untuk memilih grafik -->
@@ -102,6 +114,42 @@
             });
         });
     </script>
+
+<script>
+    const user_email = "rafi@mail.com"; // Ganti sesuai user aktif
+
+    // Ambil daftar device berdasarkan user_email
+    fetch(`/userDevices?user_email=${user_email}`)
+        .then(response => response.json())
+        .then(devices => {
+            const deviceSelect = document.getElementById("deviceSelect");
+
+            // Isi dropdown dengan daftar device
+            devices.forEach(device => {
+                const option = document.createElement("option");
+                option.value = device;
+                option.textContent = device;
+                deviceSelect.appendChild(option);
+            });
+        });
+
+    // Event listener untuk menampilkan data device terpilih
+    document.getElementById("deviceSelect").addEventListener("change", function() {
+        const selectedDevice = this.value;
+
+        if (selectedDevice) {
+            fetch(`/getSensorData?device_id=${selectedDevice}`)
+                .then(response => response.json())
+                .then(data => {
+                    const deviceDataDiv = document.getElementById("deviceData");
+                    deviceDataDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                });
+        } else {
+            document.getElementById("deviceData").innerHTML = "";
+        }
+    });
+</script>
+
 
 </body>
 </html>
