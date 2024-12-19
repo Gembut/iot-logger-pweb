@@ -30,7 +30,8 @@ const loginSchema = new mongoose.Schema({
     }
 });
 
-// Skema untuk data sensor
+
+
 const sensorSchema = new mongoose.Schema({
     humidity: Number,
     nitrogen: Number,
@@ -43,6 +44,10 @@ const sensorSchema = new mongoose.Schema({
     user_email: String,
     device_id: String
 });
+
+
+
+
 
 // Membuat model dari skema
 const collection = mongoose.model("users", loginSchema);

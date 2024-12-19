@@ -2,6 +2,7 @@ const express = require("express")
 const path = require("path")
 const bcrypt  = require("bcrypt")
 const {collection, SensorData} = require("./mongodb.js")
+const moment = require('moment-timezone');
 const port = 3000
 
 const app = express()
@@ -70,11 +71,17 @@ app.post("/add-data", async (req, res) => {
     }
 });
 
+
+
+
+
+
 app.post("/", async (req, res)=>{
     req.session.destroy((err)=>{
         res.redirect("/")
     });
 });
+
 
 
 app.post("/post", async (req, res) => {
@@ -86,10 +93,20 @@ app.post("/post", async (req, res) => {
             data = [data];
         }
 
-        // Simpan data ke MongoDB menggunakan insertMany
-        const sensorData = await SensorData.insertMany(data);
+        const formatDate = (date) => {
+            return moment(date).tz('Asia/Jakarta').format('YYYY-MM-DD, HH:mm:ss');
+        };
 
-        // Kirim respons berhasil
+        // Tambahkan `date` default jika tidak disediakan
+        const sensorData = await SensorData.insertMany(
+            data.map((item) => ({
+                ...item,
+                date: formatDate(new Date())// Isi `date` dengan waktu saat ini jika tidak ada
+            }))
+        );
+
+        //         const sensorData = await SensorData.insertMany(data);
+
         res.status(201).json({
             message: "Data berhasil disimpan",
             data: sensorData
@@ -102,6 +119,8 @@ app.post("/post", async (req, res) => {
         });
     }
 });
+
+
 
 
 function isAuthenticated(req, res, next) {
@@ -197,7 +216,7 @@ app.get("/getDeviceData", isAuthenticated, async (req, res) => {
 });
 
 
- 
+  
 
 app.post("/selectDevice", isAuthenticated, async (req, res) => {
     const { device } = req.body;
@@ -280,6 +299,6 @@ app.post("/login", async (req, res) => {
 
 
 app.listen(port, () => {
-    // console.log(`Server running on http://localhost:${port}`)
+    console.log(`Server running on http://localhost:${port}`)
     console.log(`Server is running`)
 })
