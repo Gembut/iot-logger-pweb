@@ -4,6 +4,11 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
+.range {
+    font-size: 10px;
+    color: gray;
+}
+
 .header {
     background-color: hsla(345, 93%, 44%, 1);
     color: #fff;
@@ -18,6 +23,20 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
+}
+
+.header-text {
+    margin-bottom: 10px; /* Jarak keseluruhan ke konten lainnya */
+    line-height: 1.2;   /* Atur jarak antar baris dalam grup header */
+}
+
+.header-text h4, .header-text h5 {
+    margin-top: 10px; /* Hilangkan margin default */
+}
+
+.header-text h5 {
+    font-size: 0.9rem; /* Atur ukuran font range agar lebih kecil */
+    color: gray; /* Warna lebih lembut */
 }
 
 .header-content {

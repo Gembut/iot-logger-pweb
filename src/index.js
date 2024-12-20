@@ -101,7 +101,7 @@ app.post("/post", async (req, res) => {
         const sensorData = await SensorData.insertMany(
             data.map((item) => ({
                 ...item,
-                date: formatDate(new Date())// Isi `date` dengan waktu saat ini jika tidak ada
+                date: item.date || formatDate(new Date())// Isi `date` dengan waktu saat ini jika tidak ada
             }))
         );
 
