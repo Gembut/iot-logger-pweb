@@ -9,6 +9,10 @@ body {
     color: gray;
 }
 
+.currentDateTime{
+    margin: 0;
+}
+
 .header {
     background-color: hsla(345, 93%, 44%, 1);
     color: #fff;

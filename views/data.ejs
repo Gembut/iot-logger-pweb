@@ -11,8 +11,14 @@
 </head>
 <body>
     <header class="header">
-        <h2>IoT Logger</h2>
-        <h3>Selamat datang, <%= userName %></h3>
+        <div>
+            <h4 class="currentDateTime" id="date">Loading...</h4>
+            <h4 class="currentDateTime" id="time">Loading...</h4>
+        </div>
+        <div>
+            <h1>IoT Logger</h1>
+            <h3>Selamat datang, <%= userName %></h3>
+        </div>
         <button type="submit" id="logoutButton" class="logout-btn">Logout</button>
     </header>
     

@@ -84,7 +84,7 @@ app.post("/", async (req, res)=>{
 
 
 
-app.post("/post", async (req, res) => {
+app.post("/post/data", async (req, res) => {
     try {
         let data = req.body;
 
@@ -119,6 +119,218 @@ app.post("/post", async (req, res) => {
         });
     }
 });
+
+app.get("/get/user", async (req, res) => {
+    try {
+        // Cari semua pengguna di koleksi `users`
+        const users = await collection.find({}, { name: 1, email: 1, _id: 0 }); // Ambil hanya `name` dan `email`
+
+        if (!users || users.length === 0) {
+            return res.status(404).json({ message: "Tidak ada pengguna yang ditemukan." }); // Jika tidak ada pengguna
+        }
+
+        res.status(200).json({
+            message: "Daftar pengguna berhasil ditemukan.",
+            users: users, // Kirim daftar pengguna
+        });
+    } catch (error) {
+        console.error("Error fetching users data:", error);
+        res.status(500).json({
+            message: "Terjadi kesalahan saat mengambil data pengguna.",
+            error: error.message,
+        });
+    }
+});
+
+// Endpoint untuk mendapatkan semua data sensor
+app.get("/get/data", async (req, res) => {
+    try {
+        // Ambil semua data dari koleksi `SensorData`
+        const allSensorData = await SensorData.find({}, { __v: 0 }); // Hilangkan field `__v` dari hasil query
+
+        if (!allSensorData || allSensorData.length === 0) {
+            return res.status(404).json({ message: "Tidak ada data sensor yang ditemukan." }); // Jika tidak ada data
+        }
+
+        res.status(200).json({
+            message: "Data sensor berhasil ditemukan.",
+            data: allSensorData, // Kirim semua data sensor
+        });
+    } catch (error) {
+        console.error("Error fetching sensor data:", error);
+        res.status(500).json({
+            message: "Terjadi kesalahan saat mengambil data sensor.",
+            error: error.message,
+        });
+    }
+});
+
+// Endpoint untuk mendapatkan semua data sensor dari user tertentu
+app.get("/get/data/:username", async (req, res) => {
+    try {
+        const { username } = req.params; // Ambil username dari parameter URL
+
+        // Cari user berdasarkan username
+        const user = await collection.findOne({ name: username }, { email: 1, _id: 0 });
+
+        if (!user) {
+            return res.status(404).json({ message: `User dengan username '${username}' tidak ditemukan.` });
+        }
+
+        // Ambil semua data sensor berdasarkan email user
+        const userSensorData = await SensorData.find({ user_email: user.email }, { __v: 0 });
+
+        if (!userSensorData || userSensorData.length === 0) {
+            return res.status(404).json({ message: `Tidak ada data sensor untuk user '${username}'.` });
+        }
+
+        res.status(200).json({
+            message: `Data sensor untuk user '${username}' berhasil ditemukan.`,
+            data: userSensorData, // Kirim semua data sensor milik user
+        });
+    } catch (error) {
+        console.error("Error fetching user-specific sensor data:", error);
+        res.status(500).json({
+            message: "Terjadi kesalahan saat mengambil data sensor user.",
+            error: error.message,
+        });
+    }
+});
+
+// Endpoint untuk mendapatkan semua data sensor dari user tertentu dan perangkat spesifik
+app.get("/get/data/:username/:deviceId", async (req, res) => {
+    try {
+        const { username, deviceId } = req.params; // Ambil username dan deviceId dari parameter URL
+
+        // Cari user berdasarkan username
+        const user = await collection.findOne({ name: username }, { email: 1, _id: 0 });
+
+        if (!user) {
+            return res.status(404).json({ message: `User dengan username '${username}' tidak ditemukan.` });
+        }
+
+        // Ambil semua data sensor berdasarkan email user dan deviceId
+        const userDeviceData = await SensorData.find({ user_email: user.email, device_id: deviceId }, { __v: 0 });
+
+        if (!userDeviceData || userDeviceData.length === 0) {
+            return res.status(404).json({ message: `Tidak ada data sensor untuk user '${username}' dengan perangkat '${deviceId}'.` });
+        }
+
+        res.status(200).json({
+            message: `Data sensor untuk user '${username}' dengan perangkat '${deviceId}' berhasil ditemukan.`,
+            data: userDeviceData, // Kirim semua data sensor milik user untuk deviceId tertentu
+        });
+    } catch (error) {
+        console.error("Error fetching user-specific sensor data for device:", error);
+        res.status(500).json({
+            message: "Terjadi kesalahan saat mengambil data sensor user untuk perangkat tertentu.",
+            error: error.message,
+        });
+    }
+});
+
+app.post("/post/user", async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+
+        // Validasi input
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: "Nama, email, dan password wajib diisi." });
+        }
+
+        // Periksa apakah user dengan email atau nama yang sama sudah ada
+        const existingUser = await collection.findOne({
+            $or: [
+                { email: email }, // Cek apakah email sudah ada
+                { name: name }    // Cek apakah nama sudah ada
+            ]
+        });
+
+        if (existingUser) {
+            return res.status(409).json({ message: "User dengan email atau nama tersebut sudah terdaftar." });
+        }
+
+        // Hash password sebelum disimpan
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Buat user baru
+        const newUser = new collection({
+            name,
+            email,
+            password: hashedPassword,
+        });
+
+        await newUser.save(); // Simpan user ke database
+
+        res.status(201).json({ message: "User berhasil ditambahkan!", user: { name, email } });
+    } catch (error) {
+        console.error("Error menambahkan user baru:", error);
+        res.status(500).json({
+            message: "Terjadi kesalahan saat menambahkan user baru.",
+            error: error.message,
+        });
+    }
+});
+
+app.put("/put/user/:username", async (req, res) => {
+    try {
+        const { username } = req.params; // Ambil username dari URL parameter
+        const { name, email, password } = req.body; // Ambil data yang akan diperbarui dari body
+
+        // Validasi input
+        if (!name && !email && !password) {
+            return res.status(400).json({ message: "Setidaknya satu field (name, email, password) harus diisi." });
+        }
+
+        // Temukan user berdasarkan username
+        const user = await collection.findOne({ name: username });
+
+        if (!user) {
+            return res.status(404).json({ message: "User tidak ditemukan." });
+        }
+
+        const oldEmail = user.email; // Simpan email lama untuk pembaruan di koleksi SensorData
+
+        // Perbarui field jika ada dalam body permintaan
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (password) {
+            // Hash password baru jika diperbarui
+            const saltRounds = 10;
+            user.password = await bcrypt.hash(password, saltRounds);
+        }
+
+        // Simpan perubahan user ke database
+        await user.save();
+
+        // Jika email diperbarui, perbarui juga email pada data sensor
+        if (email) {
+            await SensorData.updateMany(
+                { user_email: oldEmail }, // Cari semua dokumen dengan email lama
+                { $set: { user_email: email } } // Ubah ke email baru
+            );
+        }
+
+        res.status(200).json({
+            message: "User berhasil diperbarui.",
+            user: {
+                name: user.name,
+                email: user.email,
+            },
+        });
+    } catch (error) {
+        console.error("Error memperbarui user:", error);
+        res.status(500).json({
+            message: "Terjadi kesalahan saat memperbarui user.",
+            error: error.message,
+        });
+    }
+});
+
+
+
+
 
 
 

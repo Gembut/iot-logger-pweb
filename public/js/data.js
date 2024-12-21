@@ -30,20 +30,61 @@ async function fetchData() {
         updateCard("phCard", latestData.ph, 6, 8, "");
         updateCard("conductivityCard", latestData.conductivity, 1, 5, "ds/m");
 
-        // Update grafik jika sudah ada
-        const dates = sensorData.map(data => data.date);
-        const parameter = document.getElementById("graphSelect").value;
-        const selectedData = sensorData.map(data => data[parameter]);
+        // Mendapatkan array waktu (24 jam) untuk hari ini dalam format "HH:mm"
+        const today = new Date();
+        const timeSlots = Array.from({ length: 24 }, (_, i) => {
+            const date = new Date(today.getFullYear(), today.getMonth(), today.getDate(), i);
+            return date.toLocaleTimeString("en-CA", {
+                timeZone: "Asia/Jakarta",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+            }); // Format "HH:mm"
+        });
 
+        // Mengelompokkan data berdasarkan rentang waktu (jam sebelumnya:01 - jam saat ini:00)
+        const groupedData = timeSlots.reduce((acc, timeSlot, index) => {
+            if (index === 0) return acc; // Lewati slot pertama karena tidak memiliki rentang waktu sebelumnya
+            const previousHour = timeSlots[index - 1];
+            const rangeStart = new Date(`${today.toISOString().split('T')[0]}T${previousHour}:01`); // Jam sebelumnya:01
+            const rangeEnd = new Date(`${today.toISOString().split('T')[0]}T${timeSlot}:00`); // Jam saat ini:00
+
+            const relevantData = sensorData.filter(data => {
+                const dataTime = new Date(data.date);
+                return dataTime >= rangeStart && dataTime <= rangeEnd;
+            });
+
+            if (relevantData.length > 0) {
+                const sum = relevantData.reduce((total, data) => {
+                    return total + data[document.getElementById("graphSelect").value];
+                }, 0);
+                acc[timeSlot] = sum / relevantData.length; // Hitung rata-rata
+            } else {
+                acc[timeSlot] = null; // Tidak ada data untuk slot waktu ini
+            }
+
+            return acc;
+        }, {});
+
+        // Siapkan data rata-rata untuk grafik
+        const averages = timeSlots.map(timeSlot => groupedData[timeSlot] || null);
+
+        // Update grafik jika sudah ada
         if (sensorChart) {
-            sensorChart.data.labels = dates;
-            sensorChart.data.datasets[0].data = selectedData;
+            sensorChart.data.labels = timeSlots; // Update label menjadi "HH:mm"
+            sensorChart.data.datasets[0].data = averages; // Update data rata-rata
+            sensorChart.data.datasets[0].spanGaps = true; // Buat garis tetap terhubung
             sensorChart.update(); // Update grafik
         }
     } catch (error) {
         console.error("Error fetching data:", error);
     }
 }
+
+
+
+
+
 
 fetch(`/userDevices`)
     .then(response => response.json())
@@ -105,9 +146,26 @@ function renderChart(parameter, label, color) {
                 }
             },
             scales: {
-                x: { title: { display: true, text: "Tanggal" } },
-                y: { title: { display: true, text: "Nilai" } }
+                x: { 
+                    title: { 
+                        display: true, 
+                        text: "Tanggal" 
+                    },
+                    grid: {
+                        color: "rgb(55, 55, 55)" // Ubah garis grid sumbu X menjadi putih
+                    },
+                },
+                y: { 
+                    title: { 
+                        display: true, 
+                        text: "Nilai" 
+                    },
+                    grid: {
+                        color: "rgb(55, 55, 55)" // Ubah garis grid sumbu Y menjadi putih
+                    },
+                }
             }
+            
         }
     });
 }
@@ -224,12 +282,36 @@ document.getElementById("graphSelect").addEventListener("change", (e) => {
 
 
 
-// // Jalankan update pertama kali berdasarkan perangkat pertama dalam dropdown
-// const initialDevice = document.getElementById("deviceSelect").value;
-// if (initialDevice) {
-//     updateDeviceData(initialDevice);
-// }
+function updateDateTime() {
+    const now = new Date();
+    const optionsDate = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        timeZone: "Asia/Jakarta",
+    };
 
+    const optionsTime = {
+        hour: "2-digit",
+        minute: "2-digit",
+        // second: "2-digit",
+        hour12: false,
+        timeZone: "Asia/Jakarta",
+    }
+
+    const dateNow = now.toLocaleString("en-US", optionsDate)
+        .replace(/(\d+)\/(\d+)\/(\d+)/, "$3 / $1 / $2");
+
+    const timeNow = now.toLocaleString("en-US", optionsTime)
+        .replace(",", "")
+
+    document.getElementById("date").innerText = dateNow;
+    document.getElementById("time").innerText = timeNow;
+}
+
+// Update waktu setiap detik
+setInterval(updateDateTime, 1000);
+updateDateTime();
 
 
 
