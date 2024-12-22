@@ -329,6 +329,34 @@ app.put("/put/user/:username", async (req, res) => {
 });
 
 
+app.delete("/delete/user/:username", async (req, res) => {
+    try {
+        const { username } = req.params; // Ambil username dari parameter URL
+
+        // Cari pengguna berdasarkan username
+        const user = await collection.findOne({ name: username });
+
+        if (!user) {
+            return res.status(404).json({ message: `User dengan username '${username}' tidak ditemukan.` });
+        }
+
+        // Hapus semua data sensor yang dimiliki user berdasarkan email
+        await SensorData.deleteMany({ user_email: user.email });
+
+        // Hapus pengguna dari koleksi `users`
+        await collection.deleteOne({ name: username });
+
+        res.status(200).json({
+            message: `User '${username}' dan semua data sensornya berhasil dihapus.`,
+        });
+    } catch (error) {
+        console.error("Error menghapus user dan data sensornya:", error);
+        res.status(500).json({
+            message: "Terjadi kesalahan saat menghapus user dan data sensornya.",
+            error: error.message,
+        });
+    }
+});
 
 
 
@@ -514,3 +542,4 @@ app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`)
     console.log(`Server is running`)
 })
+
