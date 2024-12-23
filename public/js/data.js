@@ -273,22 +273,23 @@ if (initialDevice) {
 
 
 // Event listener untuk dropdown perangkat
-document.getElementById("deviceSelect").addEventListener("change", () => {
+document.getElementById("graphSelect").addEventListener("change", () => {
     const selectedDevice = document.getElementById("deviceSelect").value;
     if (selectedDevice) {
-        fetchData(selectedDevice); // Perbarui data saat perangkat dipilih
+        fetchData(); // Langsung memanggil fetchData untuk memperbarui grafik
     }
 });
 
 
-document.getElementById("graphSelect").addEventListener("change", (e) => {
-    const value = e.target.value;
-    const selectedDevice = document.getElementById("deviceSelect").value; // Ambil perangkat terpilih
+// document.getElementById("graphSelect").addEventListener("change", (e) => {
+//     const value = e.target.value;
+//     const selectedDevice = document.getElementById("deviceSelect").value; // Ambil perangkat terpilih
 
-    if (selectedDevice) {
-        updateDeviceData(selectedDevice); // Perbarui data dengan parameter baru
-    }
-});
+//     if (selectedDevice) {
+//         updateDeviceData(selectedDevice); // Perbarui data dengan parameter baru
+//     }
+// });
+
 
 
 
@@ -320,6 +321,7 @@ function updateDateTime() {
     document.getElementById("time").innerText = timeNow;
 }
 
+
 // Update waktu setiap detik
 setInterval(updateDateTime, 1000);
 updateDateTime();
@@ -328,6 +330,8 @@ updateDateTime();
 // Render grafik pertama kali (default ke humidity)
 renderChart("humidity", "Kelembapan", "blue");
 
+
+
 // Jalankan fetchData pertama kali dan setiap 1 detik
 // Jalankan fetchData setiap detik untuk perangkat yang dipilih
 setInterval(() => {
@@ -335,5 +339,5 @@ setInterval(() => {
     if (selectedDevice) {
         fetchData();
     }
-}, 10);
+}, 1000);
 
