@@ -1,5 +1,5 @@
 # IoTLogger - Installation and Deployment Guide
-
+ 
 ## 1. Clone Repository
 
 Langkah pertama adalah meng-clone repository **IoTLogger** ke dalam komputer lokal Anda. Untuk melakukannya, buka terminal dan jalankan perintah berikut:
