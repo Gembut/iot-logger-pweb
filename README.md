@@ -77,7 +77,23 @@ npm start
 Setelah proses deploy selesai, OnRender akan memberikan URL untuk aplikasi Anda. Anda dapat mengakses aplikasi melalui URL tersebut.
 
 
-## 7. Troubleshooting
+## 7. Menggunakan Postman untuk Menguji API
+
+File hasil export Postman tersedia di dalam repositori GitHub. Anda dapat menggunakannya untuk menguji endpoint API yang ada. Berikut adalah langkah-langkahnya:
+
+1. **Download dan Install Postman**
+   - Jika Anda belum memiliki Postman, unduh dari [Postman Official Website](https://www.postman.com/downloads/).
+
+2. **Import Collection Postman**
+   - Buka Postman dan pilih menu **Import**.
+   - Pilih file export Postman yang tersedia di dalam repositori (`postman-iot-logger.json`).
+
+3. **Gunakan Collection untuk Menguji API**
+   - Setelah di-import, Anda akan melihat daftar endpoint yang sudah dikonfigurasi.
+   - Sesuaikan variabel lingkungan (base URL, token, atau lainnya) sesuai dengan aplikasi Anda.
+   - Klik salah satu endpoint, sesuaikan parameter jika diperlukan, lalu tekan tombol **Send** untuk mengirimkan permintaan ke server.
+
+## 8. Troubleshooting
 
 Jika mengalami masalah:
 
@@ -86,7 +102,7 @@ Jika mengalami masalah:
 3. Periksa log aplikasi di terminal atau dashboard OnRender.
 4. Kunjungi bagian **Issues** di repositori GitHub untuk mencari solusi atau membuka issue baru.
 
-## 8. Teknologi yang Digunakan
+## 9. Teknologi yang Digunakan
 
 - **Node.js**: Untuk server-side scripting.
 - **Express.js**: Framework untuk membangun server.
@@ -94,5 +110,4 @@ Jika mengalami masalah:
 - **EJS**: Template engine untuk rendering halaman HTML.
 - **Chart.js**: Library untuk menampilkan grafik data sensor.
 
-Dengan mengikuti langkah-langkah di atas, Anda dapat menginstall, menjalankan, dan mendeply IoTLogger pada komputer lokal Anda serta di OnRender.
-
+Dengan mengikuti langkah-langkah di atas, Anda dapat menginstall, menjalankan, mendeply, serta menguji IoTLogger pada komputer lokal Anda atau di OnRender.
