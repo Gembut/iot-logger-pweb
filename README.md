@@ -4,8 +4,8 @@
 
 Langkah pertama adalah meng-clone repository **IoTLogger** ke dalam komputer lokal Anda. Untuk melakukannya, buka terminal dan jalankan perintah berikut:
 
-```bash
-git clone https://github.com/FaisalRafi01/PWEBC_IoTLogger.git
+bash
+git clone `https://github.com/Gembut/iot-logger-pweb.git`
 2. Masuk ke Direktori Proyek
 Setelah selesai meng-clone repositori, masuk ke dalam direktori proyek dengan perintah berikut:
 
