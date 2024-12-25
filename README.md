@@ -86,7 +86,7 @@ File hasil export Postman tersedia di dalam repositori GitHub. Anda dapat menggu
 
 2. **Import Collection Postman**
    - Buka Postman dan pilih menu **Import**.
-   - Pilih file export Postman yang tersedia di dalam repositori (`postman-iot-logger.json`).
+   - Pilih file export Postman yang tersedia di dalam repositori [File Postman](./postman-iot-logger.json).
 
 3. **Gunakan Collection untuk Menguji API**
    - Setelah di-import, Anda akan melihat daftar endpoint yang sudah dikonfigurasi.
