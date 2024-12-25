@@ -1,67 +1,113 @@
 # IoTLogger - Installation and Deployment Guide
- 
+
 ## 1. Clone Repository
 
 Langkah pertama adalah meng-clone repository **IoTLogger** ke dalam komputer lokal Anda. Untuk melakukannya, buka terminal dan jalankan perintah berikut:
 
-bash
-git clone `https://github.com/Gembut/iot-logger-pweb.git`
-2. Masuk ke Direktori Proyek
+```bash
+git clone https://github.com/Gembut/iot-logger-pweb.git
+```
+
+## 2. Masuk ke Direktori Proyek
+
 Setelah selesai meng-clone repositori, masuk ke dalam direktori proyek dengan perintah berikut:
 
-bash
-Copy code
+```bash
 cd PWEBC_IoTLogger
-3. Install Dependencies
-Proyek ini menggunakan Node.js dan npm untuk mengelola dependensi, serta EJS sebagai template engine. Pastikan Anda sudah menginstall Node.js dan npm di komputer Anda. Jika belum, Anda dapat mengunduhnya di Node.js Official Website.
+```
+
+## 3. Install Dependencies
+
+Proyek ini menggunakan Node.js dan npm untuk mengelola dependensi. Pastikan Anda sudah menginstall Node.js dan npm di komputer Anda. Jika belum, Anda dapat mengunduhnya di [Node.js Official Website](https://nodejs.org/).
 
 Setelah itu, jalankan perintah berikut untuk menginstall semua dependensi yang diperlukan oleh aplikasi:
 
-bash
-Copy code
+```bash
 npm install
-Perintah ini akan mengunduh dan menginstal semua dependensi yang tercantum dalam file package.json, termasuk EJS sebagai template engine.
+```
 
-4. Struktur Proyek dan Penggunaan EJS
-Proyek ini menggunakan EJS sebagai template engine untuk rendering halaman HTML. File EJS biasanya terletak di dalam folder views di dalam proyek Anda.
+Perintah ini akan mengunduh dan menginstal semua dependensi yang tercantum dalam file `package.json`.
 
-Jika Anda ingin menambahkan atau mengubah tampilan, Anda bisa memodifikasi file-file yang ada di dalam folder views sesuai kebutuhan.
+## 4. Menjalankan Aplikasi Secara Lokal
 
-5. Menjalankan Aplikasi Secara Lokal
 Setelah semua dependensi terinstall, Anda dapat menjalankan aplikasi dengan perintah berikut:
 
-bash
-Copy code
+```bash
 npm start
-Aplikasi akan berjalan di http://localhost:3000 secara default. Anda dapat membuka aplikasi di browser dengan mengunjungi URL tersebut.
+```
 
-6. Deploy ke OnRender
-Setelah berhasil menjalankan aplikasi secara lokal, Anda dapat mendeply aplikasi ke OnRender. Ikuti langkah-langkah berikut untuk mendeply aplikasi Anda ke OnRender.
+Aplikasi akan berjalan di `http://localhost:3000` secara default. Anda dapat membuka aplikasi di browser dengan mengunjungi URL tersebut.
 
-6.1 Buat Akun di OnRender
-Jika Anda belum memiliki akun di OnRender, Anda bisa mendaftar di OnRender.com.
+## 5. Struktur Proyek
 
-6.2 Buat New Web Service di OnRender
-Setelah login ke akun OnRender, pilih New Web Service.
-Pilih Deploy from GitHub.
-Hubungkan akun GitHub Anda dengan OnRender jika belum terhubung.
-Pilih repositori yang ingin Anda deploy, dalam hal ini PWEBC_IoTLogger.
-6.3 Konfigurasi Deployment
-Build Command: Anda bisa menggunakan perintah npm install untuk menginstall dependensi, atau biarkan OnRender mendeteksi perintah otomatis.
-Start Command: Gunakan perintah berikut untuk menjalankan aplikasi:
-bash
-Copy code
+- **`src/index.js`**: Berisi logika utama aplikasi.
+- **`views/`**: Folder yang berisi file template EJS untuk rendering halaman.
+- **`public/`**: Folder untuk menyimpan file static seperti CSS, JavaScript, dan gambar.
+- **`.env`**: File untuk menyimpan konfigurasi lingkungan seperti URL database.
+
+## 6. Konfigurasi Database
+
+Pastikan Anda telah menambahkan koneksi ke MongoDB di file `.env`. Contoh:
+
+```
+MONGODB_URL=mongodb+srv://username:password@cluster.mongodb.net/database_name?retryWrites=true&w=majority
+PORT=3000
+```
+
+Gantilah `username`, `password`, dan `database_name` sesuai dengan pengaturan MongoDB Anda.
+
+## 7. Deploy ke OnRender
+
+### 7.1 Buat Akun di OnRender
+
+Jika Anda belum memiliki akun di OnRender, daftar di [OnRender](https://render.com).
+
+### 7.2 Buat New Web Service di OnRender
+
+1. Login ke akun OnRender.
+2. Pilih **New Web Service**.
+3. Pilih **Deploy from GitHub**.
+4. Hubungkan akun GitHub Anda dengan OnRender jika belum terhubung.
+5. Pilih repositori "PWEBC_IoTLogger".
+
+### 7.3 Konfigurasi Deployment
+
+- **Build Command**: Biarkan kosong (Render akan mendeteksi otomatis).
+- **Start Command**: Gunakan perintah berikut untuk menjalankan aplikasi:
+
+```bash
 npm start
-6.4 Pilih Region dan Deploy
-Pilih region terdekat dengan lokasi server Anda untuk mengoptimalkan performa.
-Klik tombol Create Web Service untuk memulai proses deploy.
-6.5 Akses Aplikasi yang Sudah Dideploy
-Setelah proses deploy selesai, OnRender akan memberikan URL untuk aplikasi Anda. Anda dapat mengakses aplikasi yang sudah dideploy melalui URL tersebut.
+```
 
-7. Konfigurasi (Jika Diperlukan)
-Pastikan untuk memeriksa dan menyesuaikan pengaturan di file konfigurasi yang diperlukan (misalnya, .env atau file konfigurasi lainnya). Pada saat deploy ke OnRender, Anda dapat menambahkan variabel lingkungan di dashboard OnRender di bagian Environment Variables jika diperlukan.
+### 7.4 Pilih Region dan Deploy
 
-8. Mengatasi Masalah
-Jika Anda mengalami masalah saat menjalankan aplikasi, Anda dapat memeriksa bagian Issues di repositori GitHub ini untuk mencari solusi yang relevan atau membuka Issue baru untuk mendapatkan bantuan lebih lanjut.
+1. Pilih region terdekat untuk performa optimal.
+2. Klik tombol **Create Web Service** untuk memulai proses deploy.
 
-Dengan mengikuti langkah-langkah di atas, Anda akan dapat menginstall, menjalankan, dan mendeply IoTLogger pada komputer lokal Anda serta di OnRender.
+### 7.5 Akses Aplikasi yang Sudah Dideploy
+
+Setelah proses deploy selesai, OnRender akan memberikan URL untuk aplikasi Anda. Anda dapat mengakses aplikasi melalui URL tersebut.
+
+## 8. Konfigurasi Lingkungan (Opsional)
+
+Jika Anda menggunakan variabel lingkungan seperti `MONGODB_URL`, tambahkan variabel tersebut di halaman dashboard OnRender di bagian **Environment Variables**.
+
+## 9. Troubleshooting
+
+Jika mengalami masalah:
+
+1. Pastikan semua dependensi sudah terinstall.
+2. Periksa kembali konfigurasi di `.env`.
+3. Periksa log aplikasi di terminal atau dashboard OnRender.
+4. Kunjungi bagian **Issues** di repositori GitHub untuk mencari solusi atau membuka issue baru.
+
+## 10. Teknologi yang Digunakan
+
+- **Node.js**: Untuk server-side scripting.
+- **Express.js**: Framework untuk membangun server.
+- **MongoDB**: Database untuk menyimpan data IoT.
+- **EJS**: Template engine untuk rendering halaman HTML.
+- **Chart.js**: Library untuk menampilkan grafik data sensor.
+
+Dengan mengikuti langkah-langkah di atas, Anda dapat menginstall, menjalankan, dan mendeply IoTLogger pada komputer lokal Anda serta di OnRender.
+
