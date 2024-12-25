@@ -43,26 +43,14 @@ Aplikasi akan berjalan di `http://localhost:3000` secara default. Anda dapat mem
 - **`src/index.js`**: Berisi logika utama aplikasi.
 - **`views/`**: Folder yang berisi file template EJS untuk rendering halaman.
 - **`public/`**: Folder untuk menyimpan file static seperti CSS, JavaScript, dan gambar.
-- **`.env`**: File untuk menyimpan konfigurasi lingkungan seperti URL database.
 
-## 6. Konfigurasi Database
+## 6. Deploy ke OnRender
 
-Pastikan Anda telah menambahkan koneksi ke MongoDB di file `.env`. Contoh:
-
-```
-MONGODB_URL=mongodb+srv://username:password@cluster.mongodb.net/database_name?retryWrites=true&w=majority
-PORT=3000
-```
-
-Gantilah `username`, `password`, dan `database_name` sesuai dengan pengaturan MongoDB Anda.
-
-## 7. Deploy ke OnRender
-
-### 7.1 Buat Akun di OnRender
+### 6.1 Buat Akun di OnRender
 
 Jika Anda belum memiliki akun di OnRender, daftar di [OnRender](https://render.com).
 
-### 7.2 Buat New Web Service di OnRender
+### 6.2 Buat New Web Service di OnRender
 
 1. Login ke akun OnRender.
 2. Pilih **New Web Service**.
@@ -70,7 +58,7 @@ Jika Anda belum memiliki akun di OnRender, daftar di [OnRender](https://render.c
 4. Hubungkan akun GitHub Anda dengan OnRender jika belum terhubung.
 5. Pilih repositori "PWEBC_IoTLogger".
 
-### 7.3 Konfigurasi Deployment
+### 6.3 Konfigurasi Deployment
 
 - **Build Command**: Biarkan kosong (Render akan mendeteksi otomatis).
 - **Start Command**: Gunakan perintah berikut untuk menjalankan aplikasi:
@@ -79,29 +67,29 @@ Jika Anda belum memiliki akun di OnRender, daftar di [OnRender](https://render.c
 npm start
 ```
 
-### 7.4 Pilih Region dan Deploy
+### 6.4 Pilih Region dan Deploy
 
 1. Pilih region terdekat untuk performa optimal.
 2. Klik tombol **Create Web Service** untuk memulai proses deploy.
 
-### 7.5 Akses Aplikasi yang Sudah Dideploy
+### 6.5 Akses Aplikasi yang Sudah Dideploy
 
 Setelah proses deploy selesai, OnRender akan memberikan URL untuk aplikasi Anda. Anda dapat mengakses aplikasi melalui URL tersebut.
 
-## 8. Konfigurasi Lingkungan (Opsional)
+## 7. Konfigurasi Lingkungan (Opsional)
 
 Jika Anda menggunakan variabel lingkungan seperti `MONGODB_URL`, tambahkan variabel tersebut di halaman dashboard OnRender di bagian **Environment Variables**.
 
-## 9. Troubleshooting
+## 8. Troubleshooting
 
 Jika mengalami masalah:
 
 1. Pastikan semua dependensi sudah terinstall.
-2. Periksa kembali konfigurasi di `.env`.
+2. Periksa kembali konfigurasi database Anda.
 3. Periksa log aplikasi di terminal atau dashboard OnRender.
 4. Kunjungi bagian **Issues** di repositori GitHub untuk mencari solusi atau membuka issue baru.
 
-## 10. Teknologi yang Digunakan
+## 9. Teknologi yang Digunakan
 
 - **Node.js**: Untuk server-side scripting.
 - **Express.js**: Framework untuk membangun server.
