@@ -13,7 +13,7 @@ git clone https://github.com/Gembut/iot-logger-pweb.git
 Setelah selesai meng-clone repositori, masuk ke dalam direktori proyek dengan perintah berikut:
 
 ```bash
-cd PWEBC_IoTLogger
+cd iot-logger-pweb
 ```
 
 ## 3. Install Dependencies
