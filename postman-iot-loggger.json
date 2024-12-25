@@ -1,0 +1,187 @@
+{
+	"info": {
+		"_postman_id": "4b5a5e54-93a8-45cb-8380-dcca1363592c",
+		"name": "IoT-Logger",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40489326"
+	},
+	"item": [
+		{
+			"name": "post data",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"humidity\": 50,\n  \"nitrogen\": 2,\n  \"phospor\": 12,\n  \"kalium\": 33,\n  \"temperature\": 35,\n  \"ph\": 3,\n  \"conductivity\": 7,\n//   \"date\": \"2024-12-22, 15:12:22\",\n  \"user_email\": \"baru1@mail.com\",\n  \"device_id\": \"device-1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://iot-logger.onrender.com/post/data",
+					"protocol": "https",
+					"host": [
+						"iot-logger",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"post",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"kresna\",\n  \"email\": \"kresna@mail.com\",\n  \"password\": \"1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://iot-logger.onrender.com/post/user",
+					"protocol": "https",
+					"host": [
+						"iot-logger",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"post",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://iot-logger.onrender.com/get/user",
+					"protocol": "https",
+					"host": [
+						"iot-logger",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"get",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get data",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://iot-logger.onrender.com/get/data",
+					"protocol": "https",
+					"host": [
+						"iot-logger",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"get",
+						"data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get data per user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://iot-logger.onrender.com/get/data/kresna",
+					"protocol": "https",
+					"host": [
+						"iot-logger",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"get",
+						"data",
+						"kresna"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Budiman\"\n//   \"email\": \"rafi1@mail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://iot-logger.onrender.com/put/user/budiman",
+					"protocol": "https",
+					"host": [
+						"iot-logger",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"put",
+						"user",
+						"budiman"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete user + datanya",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://iot-logger.onrender.com/delete/user/kresna",
+					"protocol": "https",
+					"host": [
+						"iot-logger",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"delete",
+						"user",
+						"kresna"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
