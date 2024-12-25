@@ -56,7 +56,7 @@ Jika Anda belum memiliki akun di OnRender, daftar di [OnRender](https://render.c
 2. Pilih **New Web Service**.
 3. Pilih **Deploy from GitHub**.
 4. Hubungkan akun GitHub Anda dengan OnRender jika belum terhubung.
-5. Pilih repositori "PWEBC_IoTLogger".
+5. Pilih repositori "iot-logger-pweb".
 
 ### 6.3 Konfigurasi Deployment
 
@@ -76,11 +76,8 @@ npm start
 
 Setelah proses deploy selesai, OnRender akan memberikan URL untuk aplikasi Anda. Anda dapat mengakses aplikasi melalui URL tersebut.
 
-## 7. Konfigurasi Lingkungan (Opsional)
 
-Jika Anda menggunakan variabel lingkungan seperti `MONGODB_URL`, tambahkan variabel tersebut di halaman dashboard OnRender di bagian **Environment Variables**.
-
-## 8. Troubleshooting
+## 7. Troubleshooting
 
 Jika mengalami masalah:
 
@@ -89,7 +86,7 @@ Jika mengalami masalah:
 3. Periksa log aplikasi di terminal atau dashboard OnRender.
 4. Kunjungi bagian **Issues** di repositori GitHub untuk mencari solusi atau membuka issue baru.
 
-## 9. Teknologi yang Digunakan
+## 8. Teknologi yang Digunakan
 
 - **Node.js**: Untuk server-side scripting.
 - **Express.js**: Framework untuk membangun server.
