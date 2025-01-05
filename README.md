@@ -178,4 +178,3 @@ sudo systemctl status nginx
 
 Dengan mengikuti langkah-langkah di atas, Anda dapat menginstall, menjalankan, dan mendeply IoTLogger pada VPS Anda dengan konfigurasi yang optimal.
 
-
