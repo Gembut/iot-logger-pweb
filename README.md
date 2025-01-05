@@ -2,7 +2,7 @@
 
 ## 1. Clone Repository
 
-Langkah pertama adalah meng-clone repository **IoTLogger** ke dalam komputer lokal Anda. Untuk melakukannya, buka terminal dan jalankan perintah berikut:
+Langkah pertama adalah meng-clone repository **IoTLogger** ke dalam komputer lokal atau server VPS Anda. Untuk melakukannya, buka terminal dan jalankan perintah berikut:
 
 ```bash
 git clone https://github.com/Gembut/iot-logger-pweb.git
@@ -13,12 +13,12 @@ git clone https://github.com/Gembut/iot-logger-pweb.git
 Setelah selesai meng-clone repositori, masuk ke dalam direktori proyek dengan perintah berikut:
 
 ```bash
-cd iot-logger-pweb
+cd PWEBC_IoTLogger
 ```
 
 ## 3. Install Dependencies
 
-Proyek ini menggunakan Node.js dan npm untuk mengelola dependensi. Pastikan Anda sudah menginstall Node.js dan npm di komputer Anda. Jika belum, Anda dapat mengunduhnya di [Node.js Official Website](https://nodejs.org/).
+Proyek ini menggunakan Node.js dan npm untuk mengelola dependensi. Pastikan Anda sudah menginstall Node.js dan npm di VPS Anda. Jika belum, Anda dapat mengunduhnya di [Node.js Official Website](https://nodejs.org/).
 
 Setelah itu, jalankan perintah berikut untuk menginstall semua dependensi yang diperlukan oleh aplikasi:
 
@@ -28,7 +28,7 @@ npm install
 
 Perintah ini akan mengunduh dan menginstal semua dependensi yang tercantum dalam file `package.json`.
 
-## 4. Menjalankan Aplikasi Secara Lokal
+## 4. Menjalankan Aplikasi Secara Lokal di VPS
 
 Setelah semua dependensi terinstall, Anda dapat menjalankan aplikasi dengan perintah berikut:
 
@@ -36,62 +36,125 @@ Setelah semua dependensi terinstall, Anda dapat menjalankan aplikasi dengan peri
 npm start
 ```
 
-Aplikasi akan berjalan di `http://localhost:3000` secara default. Anda dapat membuka aplikasi di browser dengan mengunjungi URL tersebut.
+Aplikasi akan berjalan di `http://<IP-ADDRESS>:3000` secara default. Anda dapat membuka aplikasi di browser dengan mengunjungi URL tersebut, mengganti `<IP-ADDRESS>` dengan alamat IP VPS Anda.
 
-## 5. Struktur Proyek
+## 5. Konfigurasi Reverse Proxy dengan Nginx (Opsional)
 
-- **`src/index.js`**: Berisi logika utama aplikasi.
-- **`views/`**: Folder yang berisi file template EJS untuk rendering halaman.
-- **`public/`**: Folder untuk menyimpan file static seperti CSS, JavaScript, dan gambar.
+Untuk mengakses aplikasi melalui domain, Anda dapat mengatur reverse proxy menggunakan Nginx.
 
-## 6. Deploy ke OnRender
+### 5.1 Install Nginx
 
-### 6.1 Buat Akun di OnRender
-
-Jika Anda belum memiliki akun di OnRender, daftar di [OnRender](https://render.com).
-
-### 6.2 Buat New Web Service di OnRender
-
-1. Login ke akun OnRender.
-2. Pilih **New Web Service**.
-3. Pilih **Deploy from GitHub**.
-4. Hubungkan akun GitHub Anda dengan OnRender jika belum terhubung.
-5. Pilih repositori "iot-logger-pweb".
-
-### 6.3 Konfigurasi Deployment
-
-- **Build Command**: Biarkan kosong (Render akan mendeteksi otomatis).
-- **Start Command**: Gunakan perintah berikut untuk menjalankan aplikasi:
+Jalankan perintah berikut untuk menginstall Nginx:
 
 ```bash
-npm start
+sudo apt update
+sudo apt install nginx
 ```
 
-### 6.4 Pilih Region dan Deploy
+### 5.2 Konfigurasi Nginx
 
-1. Pilih region terdekat untuk performa optimal.
-2. Klik tombol **Create Web Service** untuk memulai proses deploy.
+Edit file konfigurasi Nginx dengan perintah berikut:
 
-### 6.5 Akses Aplikasi yang Sudah Dideploy
+```bash
+sudo nano /etc/nginx/sites-available/default
+```
 
-Setelah proses deploy selesai, OnRender akan memberikan URL untuk aplikasi Anda. Anda dapat mengakses aplikasi melalui URL tersebut.
+Tambahkan konfigurasi berikut:
 
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
 
-## 7. Menggunakan Postman untuk Menguji API
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
 
-File hasil export Postman tersedia di dalam repositori GitHub. Anda dapat menggunakannya untuk menguji endpoint API yang ada. Berikut adalah langkah-langkahnya:
+Ganti `your-domain.com` dengan nama domain Anda.
 
-1. **Download dan Install Postman**
-   - Jika Anda belum memiliki Postman, unduh dari [Postman Official Website](https://www.postman.com/downloads/).
+### 5.3 Restart Nginx
 
-2. **Import Collection Postman**
-   - Buka Postman dan pilih menu **Import**.
-   - Pilih file export Postman yang tersedia di dalam repositori [File Postman](./postman-iot-logger.json).
+Simpan file dan keluar, lalu restart Nginx dengan perintah berikut:
 
-3. **Gunakan Collection untuk Menguji API**
-   - Setelah di-import, Anda akan melihat daftar endpoint yang sudah dikonfigurasi.
-   - Sesuaikan variabel lingkungan (base URL, token, atau lainnya) sesuai dengan aplikasi Anda.
-   - Klik salah satu endpoint, sesuaikan parameter jika diperlukan, lalu tekan tombol **Send** untuk mengirimkan permintaan ke server.
+```bash
+sudo systemctl restart nginx
+```
+
+### 5.4 Perbarui Firewall
+
+Jika Anda menggunakan UFW, pastikan untuk mengizinkan HTTP dan HTTPS:
+
+```bash
+sudo ufw allow 'Nginx Full'
+```
+
+## 6. Menjalankan Aplikasi sebagai Service
+
+Untuk memastikan aplikasi berjalan secara otomatis saat server di-restart, Anda dapat membuat service systemd.
+
+### 6.1 Buat File Service
+
+Buat file service baru:
+
+```bash
+sudo nano /etc/systemd/system/iotlogger.service
+```
+
+Isi file dengan konfigurasi berikut:
+
+```ini
+[Unit]
+Description=IoTLogger Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /path/to/PWEBC_IoTLogger/src/index.js
+Restart=always
+User=www-data
+Group=www-data
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/path/to/PWEBC_IoTLogger
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Ganti `/path/to/PWEBC_IoTLogger` dengan path direktori proyek Anda.
+
+### 6.2 Enable dan Start Service
+
+Aktifkan dan mulai service:
+
+```bash
+sudo systemctl enable iotlogger
+sudo systemctl start iotlogger
+```
+
+### 6.3 Periksa Status Service
+
+Periksa apakah service berjalan:
+
+```bash
+sudo systemctl status iotlogger
+```
+
+## 7. Testing API dengan Postman
+
+File hasil export Postman tersedia dalam repositori ini. Anda dapat menggunakannya untuk menguji API yang disediakan oleh IoTLogger.
+
+### Langkah-langkah:
+
+1. Import file Postman Collection ke dalam aplikasi Postman.
+2. Sesuaikan base URL dengan alamat IP atau domain VPS Anda (misalnya, `http://<IP-ADDRESS>:3000`).
+3. Gunakan endpoint yang tersedia untuk menguji fitur API, seperti menambah data, mendapatkan data sensor, dan lain-lain.
 
 ## 8. Troubleshooting
 
@@ -99,15 +162,20 @@ Jika mengalami masalah:
 
 1. Pastikan semua dependensi sudah terinstall.
 2. Periksa kembali konfigurasi database Anda.
-3. Periksa log aplikasi di terminal atau dashboard OnRender.
-4. Kunjungi bagian **Issues** di repositori GitHub untuk mencari solusi atau membuka issue baru.
+3. Periksa log aplikasi dengan perintah berikut:
 
-## 9. Teknologi yang Digunakan
+```bash
+sudo journalctl -u iotlogger
+```
 
-- **Node.js**: Untuk server-side scripting.
-- **Express.js**: Framework untuk membangun server.
-- **MongoDB**: Database untuk menyimpan data IoT.
-- **EJS**: Template engine untuk rendering halaman HTML.
-- **Chart.js**: Library untuk menampilkan grafik data sensor.
+4. Pastikan Nginx berjalan dengan benar:
 
-Dengan mengikuti langkah-langkah di atas, Anda dapat menginstall, menjalankan, mendeply, serta menguji IoTLogger pada komputer lokal Anda atau di OnRender.
+```bash
+sudo systemctl status nginx
+```
+
+5. Jika masih ada masalah, kunjungi bagian **Issues** di repositori GitHub untuk mencari solusi atau membuka issue baru.
+
+Dengan mengikuti langkah-langkah di atas, Anda dapat menginstall, menjalankan, dan mendeply IoTLogger pada VPS Anda dengan konfigurasi yang optimal.
+
+
